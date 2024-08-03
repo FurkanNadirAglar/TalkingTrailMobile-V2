@@ -1,6 +1,6 @@
 import HomeScreen from "@/Screens/HomeScreen/HomeScreen";
 
-export default function Login() {
+export default function Home() {
   return (
  <HomeScreen></HomeScreen>
   )

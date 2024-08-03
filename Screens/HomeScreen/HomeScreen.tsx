@@ -176,7 +176,6 @@ const styles = StyleSheet.create({
   } as ImageStyle,
   placeContainer: {
     position: 'relative',
-  
   } as ViewStyle,
   placeImage: {
     width: Dimensions.get('window').width,

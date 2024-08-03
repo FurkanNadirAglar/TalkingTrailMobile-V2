@@ -190,7 +190,6 @@ const Details: React.FC = () => {
                         }
                       })
                     }
-                    
                   >
                     <View style={styles.attractionContainer}>
                       <Image

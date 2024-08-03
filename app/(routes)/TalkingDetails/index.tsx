@@ -1,6 +1,6 @@
 import TalkingDetails from "@/components/TalkingDetails/TalkingDetails";
 
-export default function Login() {
+export default function Talking() {
   return (
 <TalkingDetails></TalkingDetails>  )
 }

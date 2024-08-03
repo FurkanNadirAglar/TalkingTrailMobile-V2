@@ -11,7 +11,7 @@ const Index: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowFirstImage(false);
-      router.push('/HomeScreen');
+      router.push('/(routes)/HomeScreen');
     }, 2000); // Show the first image for 2 seconds
 
     return () => clearTimeout(timer);

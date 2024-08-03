@@ -1,6 +1,6 @@
 import DetailsScreen from "@/Screens/DetailsScreen/DetailsScreen";
 
-export default function Login() {
+export default function Details() {
   return (
  <DetailsScreen></DetailsScreen>
   )
