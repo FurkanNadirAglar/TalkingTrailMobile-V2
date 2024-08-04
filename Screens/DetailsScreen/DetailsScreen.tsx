@@ -133,7 +133,7 @@ const Details: React.FC = () => {
               resizeMode="contain"
             />
           </View>
-          <TouchableOpacity style={{ paddingRight: 8 }}>
+          <TouchableOpacity style={{ paddingRight: 8 }} onPress={() => router.push('HomeScreen')}>
             <Image
               source={require('../../assets/images/Home-1.png')}
               style={{ width: 50, height: 50, marginTop: 10, left: 20 }}

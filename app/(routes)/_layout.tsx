@@ -12,7 +12,10 @@ const Layout: React.FC = () => {
         name="TalkingDetails/index"
         options={{ headerShown: false }}
       />
-      
+      <Stack.Screen
+        name="AboutUs/index"
+        options={{ headerShown: false }}
+      />
     </Stack>
   );
 };

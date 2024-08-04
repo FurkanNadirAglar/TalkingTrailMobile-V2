@@ -86,11 +86,11 @@ const HomeScreen: React.FC = () => {
           style={styles.headerImage}
           resizeMode="cover"
         />
-        <TouchableOpacity onPress={() => router.push('AboutUs')}>
+        <TouchableOpacity style={{ paddingRight: 8 }} onPress={() => router.push('AboutUs')}>
           <Image
             source={require('../../assets/images/Home-1.png')}
-            style={styles.homeIcon}
-            resizeMode="contain"
+            style={{ width: 50, height: 50, marginTop: 10, left: 20 }}         
+            resizeMode="cover"
           />
         </TouchableOpacity>
       </View>
