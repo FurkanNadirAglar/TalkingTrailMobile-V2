@@ -26,7 +26,9 @@ interface ProjectDetails {
 const Details: React.FC = () => {
   const router = useRouter();
   const [projectDetails, setProjectDetails] = useState<ProjectDetails | null>(null);
+  const [downloadStatus, setDownloadStatus] = useState<{ [key: string]: boolean }>({});
   const context = useContext(TrailContext);
+
   if (!context) {
     console.error('TrailContext is undefined');
     return <View><Text>Error: TrailContext is undefined</Text></View>;
@@ -57,7 +59,7 @@ const Details: React.FC = () => {
     fetchProjectDetails();
   }, [shortName]);
 
-  const handleDownload = async (attraction: any, talkingPoint: string) => {
+  const handleDownload = async (attraction: any, talkingPoint: string, attractionKey: string) => {
     if (!shortName) {
       Alert.alert('Error', 'shortName is not defined');
       return;
@@ -111,6 +113,12 @@ const Details: React.FC = () => {
         ...prevTrails,
         { name: shortName, talkingPoint, image: fileUris[0] } // Update based on available data
       ]);
+
+      // Update download status
+      setDownloadStatus(prevStatus => ({
+        ...prevStatus,
+        [attractionKey]: true
+      }));
 
       Alert.alert('Success', 'Files downloaded and saved to media library successfully');
     } catch (error) {
@@ -212,7 +220,7 @@ const Details: React.FC = () => {
                         }}
                         style={styles.attractionImage}
                       />
-                      <View >
+                      <View>
                         <View style={styles.attractionNameContainer}>
                           <Text style={styles.attractionName}>
                             {attraction.Name}
@@ -220,10 +228,12 @@ const Details: React.FC = () => {
                         </View>
                         <View style={styles.talkingPointContainer}>
                           <TouchableOpacity
-                            onPress={() => handleDownload(attraction, `${index + 1} TALKING POINT`)}
+                            onPress={() => handleDownload(attraction, `${index + 1} TALKING POINT`, attractionKey)}
                           >
                             <Image
-                              source={require('../../assets/images/DownArrow-1.png')}
+                              source={downloadStatus[attractionKey]
+                                ? require('../../assets/images/Checkbox-2-Green.png')
+                                : require('../../assets/images/DownArrow-1.png')}
                               style={styles.talkingPointIcon}
                             />
                           </TouchableOpacity>
