@@ -58,32 +58,45 @@ const Details: React.FC = () => {
   }, [shortName]);
 
   const handleDownload = async (attraction: any, talkingPoint: string) => {
+    if (!shortName) {
+      Alert.alert('Error', 'shortName is not defined');
+      return;
+    }
+
+    const { Images = [], Audio } = attraction;
+    const fileUris = [
+      ...Array.isArray(Images) ? Images.map(img => `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName}/${img}`) : [],
+      Audio ? `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName}/${Audio}` : null
+    ].filter(Boolean) as string[];
+
     try {
-      if (!shortName) {
-        Alert.alert('Error', 'shortName is not defined');
-        return;
-      }
-  
-      const { Images = [], Audio, VideoId } = attraction;
-      const fileUris = [
-        ...Array.isArray(Images) ? Images.map(img => `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName}/${img}`) : [],
-        Audio ? `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName}/${Audio}` : null,
-        VideoId ? `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName}/${VideoId}` : null
-      ].filter(Boolean) as string[];
-  
       for (const uri of fileUris) {
         const filename = uri.split('/').pop() || 'unknown';
         const fileUri = FileSystem.documentDirectory + filename;
-  
+
         try {
           console.log('Downloading:', uri, 'to:', fileUri);
           const { uri: downloadedUri } = await FileSystem.downloadAsync(uri, fileUri);
           console.log('Download successful:', downloadedUri);
-  
+
           // Check if the file exists
           const fileInfo = await FileSystem.getInfoAsync(fileUri);
           if (fileInfo.exists) {
             console.log('File exists:', fileInfo.uri);
+
+            // Request permission to access media library
+            const { status } = await MediaLibrary.requestPermissionsAsync();
+            if (status === 'granted') {
+              // Determine the folder based on file type
+              const folderName = uri.includes('Images') ? 'TalkingTrail' : 'TalkingTrailMp3';
+
+              // Save the file to the media library
+              const asset = await MediaLibrary.createAssetAsync(fileUri);
+              await MediaLibrary.createAlbumAsync(folderName, asset, false);
+              console.log(`File saved to ${folderName} album:`, asset.uri);
+            } else {
+              console.warn('Permission to access media library denied');
+            }
           } else {
             console.warn('File does not exist:', fileInfo.uri);
           }
@@ -92,19 +105,20 @@ const Details: React.FC = () => {
           Alert.alert('Error', 'Failed to download file');
         }
       }
-  
+
+      // Update downloaded trails
       setDownloadedTrails(prevTrails => [
         ...prevTrails,
-        { shortName, talkingPoint }
+        { name: shortName, talkingPoint, image: fileUris[0] } // Update based on available data
       ]);
-  
-      Alert.alert('Success', 'Files downloaded successfully');
+
+      Alert.alert('Success', 'Files downloaded and saved to media library successfully');
     } catch (error) {
       console.error('Error in handleDownload:', error);
-      Alert.alert('Error', 'Failed to download files');
+      Alert.alert('Error', 'Failed to download and save files');
     }
   };
-  
+
   if (!projectDetails) {
     return (
       <View style={styles.container}>

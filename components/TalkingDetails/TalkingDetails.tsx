@@ -127,6 +127,21 @@ const TalkingDetails: React.FC = () => {
     }
   };
 
+  const seekToBeginning = async () => {
+    if (sound) {
+      await sound.setPositionAsync(0);
+    }
+  };
+
+  const seekToEnd = async () => {
+    if (sound) {
+      const status = await sound.getStatusAsync();
+      if (status.isLoaded) {
+        await sound.setPositionAsync(status.durationMillis || 0);
+      }
+    }
+  };
+
   const handlePressWebsite = () => {
     const formattedAttractionName = attractionName.toLowerCase().replace(/\s+/g, "");
     const url = `https://www.talkingtrail.com/${formattedAttractionName}`;
@@ -179,7 +194,7 @@ const TalkingDetails: React.FC = () => {
                 {formatTime(audioPosition * audioDuration)} / {formatTime(audioDuration)}
               </Text>
               <View style={styles.controls}>
-                <TouchableOpacity style={{ right: 100 }} onPress={backward}>
+                <TouchableOpacity style={{ right: 100 }} onPress={seekToBeginning}>
                   <AntDesign name="stepbackward" size={30} color="black" />
                 </TouchableOpacity>
                 <TouchableOpacity style={{ right: 70 }} onPress={backward}>
@@ -191,7 +206,7 @@ const TalkingDetails: React.FC = () => {
                 <TouchableOpacity style={{ left: 70 }} onPress={forward}>
                   <AntDesign name="forward" size={30} color="black" />
                 </TouchableOpacity>
-                <TouchableOpacity style={{ left: 100 }}>
+                <TouchableOpacity style={{ left: 100 }} onPress={seekToEnd}>
                   <AntDesign name="stepforward" size={30} color="black" />
                 </TouchableOpacity>
               </View>
