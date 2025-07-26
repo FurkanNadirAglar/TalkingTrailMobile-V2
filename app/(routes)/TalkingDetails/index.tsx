@@ -1,4 +1,4 @@
-import TalkingDetails from "@/components/TalkingDetails/TalkingDetails";
+import TalkingDetails from "../../../components/TalkingDetails/TalkingDetails";
 
 export default function Talking() {
   return (

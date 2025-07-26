@@ -1,4 +1,4 @@
-import TrailDetails from "@/components/TrailDetails/TrailDetails";
+import TrailDetails from "../../../components/TrailDetails/TrailDetails";
 
 export default function Trails() {
   return (

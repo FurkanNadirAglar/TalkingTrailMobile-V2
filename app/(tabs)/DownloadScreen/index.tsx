@@ -1,4 +1,4 @@
-import DownloadScreen from "@/Screens/DownloadScreen/DownloadScreen";
+import DownloadScreen from "../../../Screens/DownloadScreen/DownloadScreen";
 
 export default function Details() {
   return (

@@ -1,4 +1,4 @@
-import MapScreen from "@/Screens/MapScreen/MapScreen";
+import MapScreen from "../../../Screens/MapScreen/MapScreen";
 
 export default function Maps() {
   return (

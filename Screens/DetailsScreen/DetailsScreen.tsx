@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
 import * as FileSystem from 'expo-file-system';
 import * as MediaLibrary from 'expo-media-library';
+import { useRouter } from 'expo-router';
+import React, { useContext, useEffect, useState } from 'react';
+import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TrailContext } from '../../context/TrailContext';
 
 interface ProjectDetails {
@@ -155,7 +155,7 @@ const Details: React.FC = () => {
               resizeMode="contain"
             />
           </View>
-          <TouchableOpacity style={{ paddingRight: 8 }} onPress={() => router.push('HomeScreen')}>
+          <TouchableOpacity style={{ paddingRight: 8 }} onPress={() => router.push('/(routes)/HomeScreen')}>
             <Image
               source={require('../../assets/images/Home-1.png')}
               style={{ width: 50, height: 50, marginTop: 10, left: 20 }}

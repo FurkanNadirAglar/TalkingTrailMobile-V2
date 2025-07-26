@@ -1,4 +1,4 @@
-import DetailsScreen from "@/Screens/DetailsScreen/DetailsScreen";
+import DetailsScreen from "../../../Screens/DetailsScreen/DetailsScreen";
 
 export default function Details() {
   return (

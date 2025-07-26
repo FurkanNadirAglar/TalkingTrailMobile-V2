@@ -1,18 +1,18 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import React, { useContext, useEffect, useState } from 'react';
 import {
+  Dimensions,
+  Image,
+  ImageStyle,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
-  Image,
-  ScrollView,
-  Dimensions,
-  TouchableOpacity,
-  ImageStyle,
-  ViewStyle,
   TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
 } from 'react-native';
-import { useRouter } from 'expo-router';
 import { TrailContext } from '../../context/TrailContext'; // Ensure the file path is correct
 
 interface PlaceData {
@@ -86,7 +86,7 @@ const HomeScreen: React.FC = () => {
           style={styles.headerImage}
           resizeMode="cover"
         />
-        <TouchableOpacity style={{ paddingRight: 8 }} onPress={() => router.push('AboutUs')}>
+        <TouchableOpacity style={{ paddingRight: 8 }} onPress={() => router.push({ pathname: '/(routes)/AboutUs' })}>
           <Image
             source={require('../../assets/images/Home-1.png')}
             style={{ width: 50, height: 50, marginTop: 10, left: 20 }}         

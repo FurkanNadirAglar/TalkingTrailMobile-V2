@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "TalkingTrailMobile-V2",
+    "name": "Talking Trail",
     "slug": "TalkingTrailMobile-V2",
-    "version": "1.0.0",
+    "version": "3.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/TT-App_Button.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -18,14 +18,17 @@
         "NSCameraUsageDescription": "This app needs access to the camera."
       },
       "supportsTablet": true
-     
     },
     "android": {
-      "permissions": ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"],
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/TT-App_Button.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.squaresharp.talkingtrail"
     },
     "web": {
       "bundler": "metro",
@@ -37,6 +40,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "6400afd8-1416-4a95-9aaa-da5d204096c7"
+      }
     }
   }
 }
