@@ -3,6 +3,7 @@ import * as MediaLibrary from 'expo-media-library';
 import { useRouter } from 'expo-router';
 import React, { useContext, useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { TrailContext } from '../../context/TrailContext';
 
 interface ProjectDetails {
@@ -81,18 +82,13 @@ const Details: React.FC = () => {
           const { uri: downloadedUri } = await FileSystem.downloadAsync(uri, fileUri);
           console.log('Download successful:', downloadedUri);
 
-          // Check if the file exists
           const fileInfo = await FileSystem.getInfoAsync(fileUri);
           if (fileInfo.exists) {
             console.log('File exists:', fileInfo.uri);
 
-            // Request permission to access media library
             const { status } = await MediaLibrary.requestPermissionsAsync();
             if (status === 'granted') {
-              // Determine the folder based on file type
               const folderName = uri.includes('Images') ? 'TalkingTrail' : 'TalkingTrailMp3';
-
-              // Save the file to the media library
               const asset = await MediaLibrary.createAssetAsync(fileUri);
               await MediaLibrary.createAlbumAsync(folderName, asset, false);
               console.log(`File saved to ${folderName} album:`, asset.uri);
@@ -108,13 +104,11 @@ const Details: React.FC = () => {
         }
       }
 
-      // Update downloaded trails
       setDownloadedTrails(prevTrails => [
         ...prevTrails,
-        { name: shortName, talkingPoint, image: fileUris[0] } // Update based on available data
+        { name: shortName, talkingPoint, image: fileUris[0] }
       ]);
 
-      // Update download status
       setDownloadStatus(prevStatus => ({
         ...prevStatus,
         [attractionKey]: true
@@ -151,14 +145,14 @@ const Details: React.FC = () => {
           <View style={{ flex: 1, alignItems: 'center' }}>
             <Image
               source={require('../../assets/images/Header.png')}
-              style={{ width: 200, height: 70, marginTop: 10, left: 5 }}
+              style={{ width: wp('50%'), height: hp('9%'), marginTop: 10, left: 5 }}
               resizeMode="contain"
             />
           </View>
           <TouchableOpacity style={{ paddingRight: 8 }} onPress={() => router.push('/(routes)/HomeScreen')}>
             <Image
               source={require('../../assets/images/Home-1.png')}
-              style={{ width: 50, height: 50, marginTop: 10, left: 20 }}
+              style={{ width: wp('12%'), height: wp('12%'), marginTop: 10, left: 20 }}
               resizeMode="cover"
             />
           </TouchableOpacity>
@@ -173,17 +167,7 @@ const Details: React.FC = () => {
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{Name}</Text>
             <View style={styles.talkingPointsContainer}>
-              <Text style={styles.title2}>
-                {`${Object.keys(Trails).reduce(
-                  (acc, trailKey) =>
-                    acc + Object.keys(Trails[trailKey].Attractions).length,
-                  0
-                )} TALKING POINTS | 149 MB | 6-8 HOURS`}
-              </Text>
-              <Image
-                source={require('../../assets/images/DownArrow-1.png')}
-                style={styles.downArrowIcon}
-              />
+         
             </View>
           </View>
         </View>
@@ -203,49 +187,35 @@ const Details: React.FC = () => {
                           imageUri: `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName}/${attraction.Images[0]}`,
                           attractionName: attraction.Name,
                           description: attraction.Description || '',
-                          videoUri: attraction.VideoId
-                            ? `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName}/${attraction.VideoId}`
-                            : null,
-                          audioUri: attraction.Audio
-                            ? `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName}/${attraction.Audio}`
-                            : null,
+                          videoUri: attraction.VideoId ? `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName}/${attraction.VideoId}` : null,
+                          audioUri: attraction.Audio ? `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName}/${attraction.Audio}` : null,
                         }
                       })
                     }
                   >
                     <View style={styles.attractionContainer}>
                       <Image
-                        source={{
-                          uri: `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName}/${attraction.Images[0]}`,
-                        }}
+                        source={{ uri: `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName}/${attraction.Images[0]}` }}
                         style={styles.attractionImage}
                       />
                       <View>
                         <View style={styles.attractionNameContainer}>
-                          <Text style={styles.attractionName}>
-                            {attraction.Name}
-                          </Text>
+                          <Text style={styles.attractionName}>{attraction.Name}</Text>
                         </View>
                         <View style={styles.talkingPointContainer}>
                           <TouchableOpacity
                             onPress={() => handleDownload(attraction, `${index + 1} TALKING POINT`, attractionKey)}
                           >
                             <Image
-                              source={downloadStatus[attractionKey]
-                                ? require('../../assets/images/Checkbox-2-Green.png')
-                                : require('../../assets/images/DownArrow-1.png')}
+                              source={downloadStatus[attractionKey] ? require('../../assets/images/Checkbox-2-Green.png') : require('../../assets/images/DownArrow-1.png')}
                               style={styles.talkingPointIcon}
                             />
                           </TouchableOpacity>
-                          <Text style={styles.attractionDetail}>{`${
-                            index + 1 < 10 ? '0' : ''
-                          }${index + 1} TALKING POINT`}</Text>
+                          <Text style={styles.attractionDetail}>{`${index + 1 < 10 ? '0' : ''}${index + 1} TALKING POINT`}</Text>
                         </View>
                       </View>
                     </View>
-                    {index !== Object.keys(trail.Attractions).length - 1 && (
-                      <View style={styles.separator} />
-                    )}
+                    {index !== Object.keys(trail.Attractions).length - 1 && <View style={styles.separator} />}
                   </TouchableOpacity>
                 );
               })}
@@ -260,7 +230,7 @@ const Details: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: wp('5%'),
     alignItems: 'center',
     backgroundColor: 'white',
   },
@@ -271,14 +241,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backButtonImage: {
-    width: 50,
-    height: 40,
+    width: wp('10%'),
+    height: hp('5%'),
     right: '40%',
     top: 3,
   },
   downArrowIcon: {
-    width: 50,
-    height: 50,
+    width: wp('12%'),
+    height: wp('12%'),
     marginLeft: 5,
   },
   talkingPointsContainer: {
@@ -290,16 +260,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   talkingPointIcon: {
-    width: 20,
-    height: 30,
+    width: wp('5%'),
+    height: wp('7%'),
     marginRight: 5,
   },
   attractionDetail: {
-    fontSize: 14,
+    fontSize: wp('3.5%'),
     color: 'gray',
   },
   title: {
-    fontSize: 24,
+    fontSize: wp('6%'),
     fontWeight: 'bold',
     marginBottom: 10,
     alignSelf: 'flex-start',
@@ -310,16 +280,16 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   attractionImage: {
-    width: '25%',
-    height: '100%',
-    marginLeft: '12%',
-    marginRight: '3%',
+    width: wp('25%'),
+    height: hp('12%'),
+    marginLeft: wp('8%'),
+    marginRight: wp('3%'),
     borderRadius: 8,
     alignSelf: 'flex-start',
     resizeMode: 'stretch',
   },
   attractionName: {
-    fontSize: 20,
+    fontSize: wp('5%'),
     fontWeight: 'bold',
     marginBottom: 5,
     color: 'black',
@@ -335,12 +305,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.7,
     borderBottomColor: 'lightgrey',
     marginLeft: 10,
-    width: 480,
+    width: wp('100%'),
     marginBottom: 10,
   },
   image: {
-    width: 410,
-    height: 260,
+    width: wp('100%'),
+    height: hp('30%'),
     marginBottom: 10,
     resizeMode: 'stretch',
   },
@@ -349,17 +319,18 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     position: 'relative',
-    bottom: 70,
+    bottom: hp('8%'),
     backgroundColor: 'white',
     borderRadius: 15,
-    padding: 40,
-    width: 370,
+    padding: 0,
+    paddingLeft: wp('6%'),
+    paddingTop: hp('2%'),
+    width: wp('90%'),
   },
   title2: {
     color: 'gray',
-    fontSize: 13,
-    marginTop: 15,
-    alignSelf: 'flex-start',
+    fontSize: wp('3.5%'),
+    marginTop: hp('1.5%'),
   },
 });
 

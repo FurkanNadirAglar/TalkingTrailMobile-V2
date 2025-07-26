@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Linking,
-} from "react-native";
-import { Audio, AVPlaybackStatus } from "expo-av";
 import { AntDesign } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { Audio, AVPlaybackStatus } from "expo-av";
+import React, { useEffect, useState } from "react";
+import {
+  Image,
+  Linking,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from "react-native-responsive-screen";
 
 type ParamList = {
   TalkingDetails: {
@@ -41,28 +42,25 @@ const TalkingDetails: React.FC = () => {
           { shouldPlay: false }
         );
         setSound(newSound);
-  
         if (status.isLoaded) {
           setAudioDuration((status.durationMillis || 0) / 1000);
         } else {
           setAudioDuration(0);
         }
-  
         newSound.setOnPlaybackStatusUpdate(updateAudioPosition);
       } catch (error) {
         console.error("Failed to load audio", error);
       }
     };
-  
     loadAudio();
-  
+
     return () => {
       if (sound) {
         sound.unloadAsync();
       }
     };
   }, [audioUri]);
-  
+
   const updateAudioPosition = (status: AVPlaybackStatus) => {
     if (status.isLoaded) {
       setAudioPosition((status.positionMillis || 0) / (status.durationMillis || 1));
@@ -162,14 +160,14 @@ const TalkingDetails: React.FC = () => {
           <View style={{ flex: 1, alignItems: "center" }}>
             <Image
               source={require("../../assets/images/Header.png")}
-              style={{ width: 200, height: 70, marginTop: 10, left: 5 }}
+              style={{ width: wp("45%"), height: hp("7%"), marginTop: hp("1%") }}
               resizeMode="contain"
             />
           </View>
-          <TouchableOpacity style={{ paddingRight: 8 }}>
+          <TouchableOpacity style={{ paddingRight: wp("2%") }}>
             <Image
               source={require("../../assets/images/Home-1.png")}
-              style={{ width: 50, height: 50, marginTop: 10, left: 10 }}
+              style={{ width: wp("12%"), height: wp("12%"), marginTop: hp("1%") }}
               resizeMode="cover"
             />
           </TouchableOpacity>
@@ -181,7 +179,7 @@ const TalkingDetails: React.FC = () => {
           {audioUri && (
             <>
               <Slider
-                style={{ width: "95%", height: 40 }}
+                style={{ width: wp("90%"), height: hp("5%"), bottom: hp("7%") }}
                 minimumValue={0}
                 maximumValue={1}
                 value={audioPosition}
@@ -194,25 +192,24 @@ const TalkingDetails: React.FC = () => {
                 {formatTime(audioPosition * audioDuration)} / {formatTime(audioDuration)}
               </Text>
               <View style={styles.controls}>
-                <TouchableOpacity style={{ right: 100 }} onPress={seekToBeginning}>
-                  <AntDesign name="stepbackward" size={30} color="black" />
+                <TouchableOpacity onPress={seekToBeginning}>
+                  <AntDesign name="stepbackward" size={hp("3.5%")} color="black" />
                 </TouchableOpacity>
-                <TouchableOpacity style={{ right: 70 }} onPress={backward}>
-                  <AntDesign name="banckward" size={30} color="black" />
+                <TouchableOpacity onPress={backward}>
+                  <AntDesign name="banckward" size={hp("3.5%")} color="black" />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={isPlaying ? pauseSound : playSound}>
-                  <AntDesign name={isPlaying ? "pause" : "caretright"} size={50} color="gray" />
+                  <AntDesign name={isPlaying ? "pause" : "caretright"} size={hp("6%")} color="gray" />
                 </TouchableOpacity>
-                <TouchableOpacity style={{ left: 70 }} onPress={forward}>
-                  <AntDesign name="forward" size={30} color="black" />
+                <TouchableOpacity onPress={forward}>
+                  <AntDesign name="forward" size={hp("3.5%")} color="black" />
                 </TouchableOpacity>
-                <TouchableOpacity style={{ left: 100 }} onPress={seekToEnd}>
-                  <AntDesign name="stepforward" size={30} color="black" />
+                <TouchableOpacity onPress={seekToEnd}>
+                  <AntDesign name="stepforward" size={hp("3.5%")} color="black" />
                 </TouchableOpacity>
               </View>
             </>
           )}
-          <Text style={styles.subTitle}>SCRIPT DESCRIPTION</Text>
           <Text style={styles.description}>{description}</Text>
           <TouchableOpacity onPress={handlePressWebsite}>
             <Text style={styles.websiteLink}>GO TO WEBSITE</Text>
@@ -238,61 +235,54 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "#FFF",
-    paddingTop: 20,
+    paddingTop: hp("2%"),
   },
   headerContainer: {
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 10,
-  },
-  subTitle: {
-    fontSize: 14,
-    marginRight: 189,
-    textAlign: "left",
-    marginTop: 25,
-    fontWeight: "bold",
+    paddingHorizontal: wp("3%"),
   },
   imageContainer: {
     width: "100%",
     alignItems: "center",
   },
   websiteLink: {
-    marginVertical: 10,
-    marginBottom: 20,
+    marginVertical: hp("1%"),
+    marginBottom: hp("3%"),
     color: "black",
     fontWeight: "bold",
     textAlign: "center",
-    fontSize: 15,
+    fontSize: wp("4%"),
   },
   image: {
-    width: 420,
-    height: 360,
-    marginBottom: 10,
+    width: wp("100%"),
+    height: hp("40%"),
+    marginBottom: hp("1%"),
     resizeMode: "stretch",
   },
   imageTextContainer: {
     position: "relative",
-    bottom: 100,
+    bottom: hp("8%"),
     backgroundColor: "white",
     borderRadius: 15,
-    padding: 40,
-    width: 370,
+    padding: wp("8%"),
+    width: wp("90%"),
     color: "black",
     fontWeight: "bold",
-    fontSize: 20,
+    fontSize: wp("6%"),
     textAlign: "left",
   },
-  description: {
-    marginHorizontal: 40,
-    fontSize: 16,
-    textAlign: "center",
-    marginBottom: 10,
-  },
+description: {
+  marginHorizontal: wp("8%"),
+  fontSize: wp("4%"),
+  textAlign: "left", // Ortalamak yerine sola yaslanır
+  bottom: hp("2%"),
+},
   button: {
-    marginTop: 10,
-    padding: 10,
+    marginTop: hp("1%"),
+    padding: hp("1.5%"),
     backgroundColor: "lightblue",
     borderRadius: 5,
     textAlign: "center",
@@ -300,21 +290,20 @@ const styles = StyleSheet.create({
   controls: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  audioControls: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginRight: "auto",
+    justifyContent: "space-evenly",
+    width: wp("90%"),
+    marginVertical: hp("2%"),
+    bottom: hp("5%"),
   },
   sliderText: {
     alignSelf: "center",
-    marginTop: 10,
+    bottom: hp("6%"),
+    fontSize: wp("4%"),
   },
   backButtonImage: {
-    width: 50,
-    height: 40,
-    top: 5,
-    right: 10,
+    width: wp("10%"),
+    height: hp("4%"),
+    marginTop: hp("1%"),
   },
 });
 

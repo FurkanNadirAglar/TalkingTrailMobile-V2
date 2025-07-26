@@ -2,7 +2,6 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import React, { useContext, useEffect, useState } from 'react';
 import {
-  Dimensions,
   Image,
   ImageStyle,
   ScrollView,
@@ -13,7 +12,8 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { TrailContext } from '../../context/TrailContext'; // Ensure the file path is correct
+import { heightPercentageToDP as hp, widthPercentageToDP as wp } from 'react-native-responsive-screen';
+import { TrailContext } from '../../context/TrailContext';
 
 interface PlaceData {
   shortName: string;
@@ -24,9 +24,8 @@ interface PlaceData {
 }
 
 const HomeScreen: React.FC = () => {
-  const { setShortName } = useContext(TrailContext)!; // Use non-null assertion operator because we assume the context is always available
+  const { setShortName } = useContext(TrailContext)!;
   const [places, setPlaces] = useState<PlaceData[]>([]);
-  const screenWidth = Dimensions.get('window').width;
   const router = useRouter();
 
   useEffect(() => {
@@ -60,10 +59,7 @@ const HomeScreen: React.FC = () => {
 
         for (const shortName of projects) {
           const response = await fetch(
-            `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName.replace(
-              /\s/g,
-              '_'
-            )}/project.json`
+            `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName.replace(/\s/g, '_')}/project.json`
           );
           const data = await response.json();
           placesData.push({ shortName, data });
@@ -86,14 +82,15 @@ const HomeScreen: React.FC = () => {
           style={styles.headerImage}
           resizeMode="cover"
         />
-        <TouchableOpacity style={{ paddingRight: 8 }} onPress={() => router.push({ pathname: '/(routes)/AboutUs' })}>
+        <TouchableOpacity style={styles.aboutButton} onPress={() => router.push({ pathname: '/(routes)/AboutUs' })}>
           <Image
             source={require('../../assets/images/Home-1.png')}
-            style={{ width: 50, height: 50, marginTop: 10, left: 20 }}         
+            style={styles.homeIcon}
             resizeMode="cover"
           />
         </TouchableOpacity>
       </View>
+
       <ScrollView>
         <View>
           {places.map(({ shortName, data }) => (
@@ -129,8 +126,7 @@ const HomeScreen: React.FC = () => {
                       .toLowerCase()
                       .replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())}
                   </Text>
-                  {data &&
-                    data.Trails &&
+                  {data?.Trails &&
                     Object.values(data.Trails).map((trail, index) => (
                       <Text style={styles.overlayTextTalking} key={index}>
                         {Object.keys(trail.Attractions).length} TALKING POINTS | 149 MB | 6-8 HOURS
@@ -147,6 +143,7 @@ const HomeScreen: React.FC = () => {
           ))}
         </View>
       </ScrollView>
+
       <StatusBar style="auto" />
     </View>
   );
@@ -163,51 +160,60 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    width: '100%',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    width: wp('100%'),
+    paddingHorizontal: wp('5%'),
+    paddingVertical: hp('1.5%'),
   } as ViewStyle,
   headerImage: {
-    width: 200, height: 50, marginTop: 10, marginLeft: 75
+    width: wp('60%'),
+    height: hp('6%'),
+    marginTop: hp('1.5%'),
+    marginLeft: wp('10%'),
   } as ImageStyle,
+  aboutButton: {
+    paddingRight: wp('2%'),
+  } as ViewStyle,
   homeIcon: {
-    width: 50,
-    height: 50,
+    width: wp('12%'),
+    height: wp('12%'),
+    marginTop: hp('1%'),
+    left: wp('5%'),
   } as ImageStyle,
   placeContainer: {
     position: 'relative',
   } as ViewStyle,
   placeImage: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').width,
+    width: wp('100%'),
+    height: wp('70%'),
   } as ImageStyle,
   overlay: {
     position: 'absolute',
     bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    padding: 10,
-    width: Dimensions.get('window').width,
+    padding: hp('1.2%'),
+    width: wp('100%'),
     flexDirection: 'row',
     justifyContent: 'space-between',
-    height: 120,
+    height: hp('11%'),
   } as ViewStyle,
   overlayContent: {
     flexDirection: 'column',
   } as ViewStyle,
   overlayText: {
     color: '#fff',
-    fontSize: 23,
+    fontSize: hp('2.3%'),
     fontWeight: 'bold',
   } as TextStyle,
   overlayTextTalking: {
     color: 'lightgray',
-    fontSize: 13,
+    fontSize: hp('1.6%'),
+    marginTop: hp('0.5%'),
   } as TextStyle,
   downArrowIcon: {
-    width: 75,
-    height: 75,
+    width: wp('15%'),
+    height: wp('15%'),
     position: 'absolute',
-    right: 10,
+    right: wp('2%'),
   } as ImageStyle,
 });
 

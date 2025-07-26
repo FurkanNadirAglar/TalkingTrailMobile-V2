@@ -1,14 +1,18 @@
+import { useNavigation } from "@react-navigation/native";
 import React, { useContext, useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
   Image,
   ScrollView,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { TrailContext } from "../../context/TrailContext"; // Adjust the file path accordingly
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from "react-native-responsive-screen";
+import { TrailContext } from "../../context/TrailContext";
 
 const TrailDetails: React.FC = () => {
   const navigation = useNavigation();
@@ -56,14 +60,14 @@ const TrailDetails: React.FC = () => {
           <View style={{ flex: 1, alignItems: "center" }}>
             <Image
               source={require("../../assets/images/Header.png")}
-              style={{ width: 200, height: 70, marginTop: 10, left: 20 }}
+              style={styles.headerImage}
               resizeMode="contain"
             />
           </View>
-          <TouchableOpacity style={{ paddingRight: 8 }}>
+          <TouchableOpacity style={{ paddingRight: wp(2) }}>
             <Image
               source={require("../../assets/images/Home-1.png")}
-              style={{ width: 50, height: 50, marginTop: 10, left: 10 }}
+              style={styles.homeIcon}
               resizeMode="cover"
             />
           </TouchableOpacity>
@@ -107,66 +111,80 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "#FFF",
-    paddingTop: 20,
+    paddingTop: hp(3),
   },
   headerContainer: {
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 10,
+    paddingHorizontal: wp(2.5),
   },
   backButton: {
     position: "absolute",
-    top: 24,
+    top: hp(3),
   },
   backButtonImage: {
-    width: 50,
-    height: 40,
+    width: wp(12),
+    height: hp(5),
   },
-  descriptionText: {
-    fontSize: 14,
-    lineHeight: 22,
-    textAlign: "center",
-    paddingHorizontal: 20,
-    bottom: 90,
+  headerImage: {
+    width: wp(50),
+    height: hp(9),
+    marginTop: hp(1),
+    left: wp(5),
   },
-  subTitle: {
-    fontSize: 16,
-    fontWeight: "bold",
-    bottom: 110,
+  homeIcon: {
+    width: wp(12),
+    height: wp(12),
+    marginTop: hp(1),
+    left: wp(2),
+  },
+  image: {
+    width: wp(100),
+    height: hp(30),
+    marginBottom: hp(1.5),
+    resizeMode: "stretch",
   },
   textContainer: {
     width: "100%",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    marginTop: 20,
+    alignItems: "flex-start",
+    paddingHorizontal: wp(5),
+    marginTop: hp(2),
   },
   titleText: {
     position: "relative",
-    bottom: 100,
+    bottom: hp(12),
     backgroundColor: "white",
-    borderRadius: 15,
-    padding: 40,
-    width: 370,
+    borderRadius: wp(3),
+    padding: wp(8),
+    width: wp(90),
     color: "black",
     fontWeight: "bold",
-    fontSize: 24,
+    fontSize: wp(6),
     textAlign: "left",
   },
+  subTitle: {
+    fontSize: wp(4),
+    fontWeight: "bold",
+    bottom: hp(14),
+    paddingHorizontal: wp(8),
+    textAlign: "left",
+  },
+  descriptionText: {
+    fontSize: wp(3.5),
+    lineHeight: wp(5.5),
+    textAlign: "left",
+    paddingHorizontal: wp(8),
+    bottom: hp(11),
+  },
   loadingText: {
-    fontSize: 18,
+    fontSize: wp(4.5),
     color: "gray",
   },
   errorText: {
-    fontSize: 18,
+    fontSize: wp(4.5),
     color: "red",
-  },
-  image: {
-    width: 410,
-    height: 260,
-    marginBottom: 10,
-    resizeMode: "stretch",
   },
 });
 
