@@ -315,18 +315,24 @@ const styles = StyleSheet.create({
     resizeMode: 'stretch',
   },
   imageContainer: {
-    alignItems: 'center',
+
+    width: "100%",
+    alignItems: "center",
+  
   },
-  titleContainer: {
-    position: 'relative',
-    bottom: hp('8%'),
-    backgroundColor: 'white',
-    borderRadius: 15,
-    padding: 0,
-    paddingLeft: wp('6%'),
-    paddingTop: hp('2%'),
-    width: wp('90%'),
-  },
+titleContainer: {
+  width: "100%",
+  alignItems: "flex-start",
+  paddingHorizontal: wp('5%'),
+  marginTop: hp('2%'),
+  // İstersen position: 'relative' + bottom ile oynayabilirsin
+  position: 'relative',
+  bottom: hp('7%'),  // İkinci koddaki gibi düşünebilirsin
+  backgroundColor: 'white',
+  borderRadius: wp('3%'),
+  paddingVertical: hp('2%'),
+  
+},
   title2: {
     color: 'gray',
     fontSize: wp('3.5%'),

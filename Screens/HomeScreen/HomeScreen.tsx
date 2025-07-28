@@ -126,12 +126,8 @@ const HomeScreen: React.FC = () => {
                       .toLowerCase()
                       .replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())}
                   </Text>
-                  {data?.Trails &&
-                    Object.values(data.Trails).map((trail, index) => (
-                      <Text style={styles.overlayTextTalking} key={index}>
-                        {Object.keys(trail.Attractions).length} TALKING POINTS | 149 MB | 6-8 HOURS
-                      </Text>
-                    ))}
+                 
+                  
                 </View>
                 <Image
                   source={require('../../assets/images/DownArrow-1-rev.png')}
@@ -201,7 +197,7 @@ const styles = StyleSheet.create({
   } as ViewStyle,
   overlayText: {
     color: '#fff',
-    fontSize: hp('2.3%'),
+    fontSize: hp('2.6%'),
     fontWeight: 'bold',
   } as TextStyle,
   overlayTextTalking: {

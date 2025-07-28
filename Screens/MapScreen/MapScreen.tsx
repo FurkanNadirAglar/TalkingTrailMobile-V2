@@ -7,7 +7,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE, Region } from "react-native-maps";
+import MapView, {
+  Callout,
+  Marker,
+  PROVIDER_GOOGLE,
+  Region,
+} from "react-native-maps";
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -20,6 +25,9 @@ interface Attraction {
   Name: string;
   Lattitude: number;
   Longitude: number;
+  Images?: string[]; // Diziyi belirt
+  PhoneExtension?: string;
+
 }
 
 interface TrailData {
@@ -158,19 +166,60 @@ const MapScreen: React.FC = () => {
             scrollEnabled={true}
             loadingEnabled={true}
           >
-            {Object.values(
-              trailData.Trails[Object.keys(trailData.Trails)[0]]?.Attractions || {}
-            ).map((attraction, index) => (
-              <Marker
-                key={index}
-                coordinate={{
-                  latitude: attraction.Lattitude,
-                  longitude: attraction.Longitude,
-                }}
-                title={attraction.Name}
-                image={require("../../assets/images/Map-Icon.png")}
-              />
-            ))}
+      {Object.values(
+  trailData.Trails[Object.keys(trailData.Trails)[0]]?.Attractions || {}
+).map((attraction, index) => {
+  let imageUrl: string | undefined = undefined;
+
+  if (attraction.Images && attraction.Images.length > 0) {
+    const firstImage = attraction.Images[0];
+    imageUrl = firstImage.startsWith("http")
+      ? firstImage
+      : `https://talkingtrailstorage.blob.core.windows.net/projects/${shortName?.replace(
+          /\s/g,
+          "_"
+        )}/Images/${firstImage}`;
+  }
+console.log("Imafasfsaage URL:", imageUrl);
+  return (
+   <Marker
+      key={index}
+      coordinate={{
+        latitude: attraction.Lattitude,
+        longitude: attraction.Longitude,
+      }}
+      image={require("../../assets/images/Map-Icon.png")}
+    >
+   <Callout>
+  <View style={styles.calloutContainer}>
+    <Text style={styles.calloutTitle}>{attraction.Name}</Text>
+    {attraction.PhoneExtension ? (
+      <Text style={styles.calloutTitle}>
+        Extension: {attraction.PhoneExtension}
+      </Text>
+    ) : null}
+
+    {imageUrl ? (
+      <Image
+        source={{ uri: imageUrl }}
+        style={styles.calloutThumbnail}  // thumbnail style kullanalım
+        resizeMode="cover"
+        onLoad={() => console.log("Thumbnail loaded:", imageUrl)}
+        onError={() => console.warn("Thumbnail load error for:", imageUrl)}
+      />
+    ) : (
+      <Image
+        source={require("../../assets/images/Map-Icon.png")}
+        style={styles.calloutThumbnail}
+        resizeMode="cover"
+      />
+    )}
+  </View>
+</Callout>
+
+    </Marker>
+  );
+})}
           </MapView>
 
           {/* Zoom Buttons */}
@@ -214,7 +263,13 @@ const styles = StyleSheet.create({
     flex: 1,
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height - hp("15%"),
-  },
+  },calloutThumbnail: {
+  width: wp("15%"),  // küçük genişlik (örnek 15% ekran genişliği)
+  height: hp("10%"), // küçük yükseklik
+  borderRadius: 4,   // hafif yuvarlatma (opsiyonel)
+  marginTop: 6,
+},
+
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   loadingText: { fontSize: wp("4.5%"), color: "gray" },
   zoomButtonsContainer: {
@@ -238,6 +293,25 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     lineHeight: wp("8%"),
   },
+
+ calloutContainer: {
+  width: wp("40%"),
+  padding: 10,
+  backgroundColor: "white",
+  borderRadius: 8,
+  alignItems: "center",
+  overflow: "visible", // önemli
+},
+  calloutTitle: {
+    fontWeight: "bold",
+    fontSize: wp("4.5%"),
+    marginBottom: 6,
+  },
+calloutImage: {
+  width: wp("35%"),
+  height: hp("15%"),
+  resizeMode: "contain",
+},
 });
 
 export default MapScreen;
