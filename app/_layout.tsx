@@ -1,6 +1,9 @@
-import "react-native-reanimated";
+import GlobalAudioPlayer from "@/components/GlobalAudioPlayer";
 import { Stack } from "expo-router";
-import { TrailProvider } from "../context/TrailContext"; // Adjust the path as needed
+import { View } from "react-native";
+import "react-native-reanimated";
+import { AudioProvider } from "../context/AudioContext";
+import { TrailProvider } from "../context/TrailContext";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -10,13 +13,17 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   return (
-      <TrailProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" options={{ headerShown: false }}/>
+    <TrailProvider>
+      <AudioProvider>
+        <View style={{ flex: 1 }}>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          </Stack>
 
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-
-        </Stack>
-      </TrailProvider>
+          <GlobalAudioPlayer />
+        </View>
+      </AudioProvider>
+    </TrailProvider>
   );
 }

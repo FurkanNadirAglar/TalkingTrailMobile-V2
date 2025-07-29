@@ -1,8 +1,8 @@
+import { useAudio } from "@/context/AudioContext";
 import { AntDesign } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { Audio, AVPlaybackStatus } from "expo-av";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   Image,
   Linking,
@@ -29,120 +29,45 @@ const TalkingDetails: React.FC = () => {
   const route = useRoute<RouteProp<ParamList, "TalkingDetails">>();
   const { imageUri, attractionName, description, videoUri, audioUri } = route.params;
 
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [audioPosition, setAudioPosition] = useState(0);
-  const [audioDuration, setAudioDuration] = useState(0);
+  const {
+    audioUri: playingUri,
+    isPlaying,
+    position,
+    duration,
+    playAudio,
+    play,
+    pause,
+    seekTo,
+    forward,
+    backward,
+    stop,
+  } = useAudio();
 
-  useEffect(() => {
-    const loadAudio = async () => {
-      try {
-        const { sound: newSound, status } = await Audio.Sound.createAsync(
-          { uri: audioUri },
-          { shouldPlay: false }
-        );
-        setSound(newSound);
-        if (status.isLoaded) {
-          setAudioDuration((status.durationMillis || 0) / 1000);
-        } else {
-          setAudioDuration(0);
-        }
-        newSound.setOnPlaybackStatusUpdate(updateAudioPosition);
-      } catch (error) {
-        console.error("Failed to load audio", error);
-      }
-    };
-    loadAudio();
-
-    return () => {
-      if (sound) {
-        sound.unloadAsync();
-      }
-    };
-  }, [audioUri]);
-
-  const updateAudioPosition = (status: AVPlaybackStatus) => {
-    if (status.isLoaded) {
-      setAudioPosition((status.positionMillis || 0) / (status.durationMillis || 1));
-    }
-  };
-
-  const playSound = async () => {
-    if (sound) {
-      const status = await sound.getStatusAsync();
-      if (status.isLoaded && !status.isPlaying) {
-        await sound.playAsync();
-        setIsPlaying(true);
-      }
-    }
-  };
-
-  const pauseSound = async () => {
-    if (sound) {
-      const status = await sound.getStatusAsync();
-      if (status.isLoaded && status.isPlaying) {
-        await sound.pauseAsync();
-        setIsPlaying(false);
-      }
-    }
-  };
-
-  const onSliderChange = async (value: number) => {
-    if (sound) {
-      const status = await sound.getStatusAsync();
-      if (status.isLoaded) {
-        await sound.setPositionAsync(value * (status.durationMillis || 1));
-      }
-    }
-  };
+  const audioPositionNormalized = duration ? position / duration : 0;
 
   const formatTime = (time: number) => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
+    const minutes = Math.floor(time / 60000);
+    const seconds = Math.floor((time % 60000) / 1000);
     return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
-  const forward = async () => {
-    if (sound) {
-      const status = await sound.getStatusAsync();
-      if (status.isLoaded) {
-        const newPosition = Math.min(
-          (status.positionMillis || 0) + 10000,
-          status.durationMillis || 0
-        );
-        await sound.setPositionAsync(newPosition);
-      }
+  const handlePlayPause = () => {
+    if (playingUri === audioUri) {
+      isPlaying ? pause() : play();
+    } else {
+      playAudio(audioUri);
     }
   };
 
-  const backward = async () => {
-    if (sound) {
-      const status = await sound.getStatusAsync();
-      if (status.isLoaded) {
-        const newPosition = Math.max((status.positionMillis || 0) - 10000, 0);
-        await sound.setPositionAsync(newPosition);
-      }
-    }
-  };
-
-  const seekToBeginning = async () => {
-    if (sound) {
-      await sound.setPositionAsync(0);
-    }
-  };
-
-  const seekToEnd = async () => {
-    if (sound) {
-      const status = await sound.getStatusAsync();
-      if (status.isLoaded) {
-        await sound.setPositionAsync(status.durationMillis || 0);
-      }
+  const handleSliderChange = (value: number) => {
+    if (duration) {
+      seekTo(value * duration);
     }
   };
 
   const handlePressWebsite = () => {
     const formattedAttractionName = attractionName.toLowerCase().replace(/\s+/g, "");
-    const url = `https://www.talkingtrail.com/${formattedAttractionName}`;
+    const url = `https://www.talkingtrail.com/trails/${formattedAttractionName}`;
     Linking.openURL(url).catch((err) => console.error("Error opening URL:", err));
   };
 
@@ -182,29 +107,33 @@ const TalkingDetails: React.FC = () => {
                 style={{ width: wp("90%"), height: hp("5%"), bottom: hp("7%") }}
                 minimumValue={0}
                 maximumValue={1}
-                value={audioPosition}
-                onSlidingComplete={onSliderChange}
+                value={audioPositionNormalized}
+                onSlidingComplete={handleSliderChange}
                 minimumTrackTintColor="rgba(204, 204, 0, 204)"
                 maximumTrackTintColor="#000000"
                 thumbTintColor="rgba(204, 204, 0, 204)"
               />
               <Text style={styles.sliderText}>
-                {formatTime(audioPosition * audioDuration)} / {formatTime(audioDuration)}
+                {formatTime(position)} / {formatTime(duration)}
               </Text>
               <View style={styles.controls}>
-                <TouchableOpacity onPress={seekToBeginning}>
+                <TouchableOpacity onPress={() => seekTo(0)}>
                   <AntDesign name="stepbackward" size={hp("3.5%")} color="black" />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={backward}>
                   <AntDesign name="banckward" size={hp("3.5%")} color="black" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={isPlaying ? pauseSound : playSound}>
-                  <AntDesign name={isPlaying ? "pause" : "caretright"} size={hp("6%")} color="gray" />
+                <TouchableOpacity onPress={handlePlayPause}>
+                  <AntDesign
+                    name={isPlaying && playingUri === audioUri ? "pause" : "caretright"}
+                    size={hp("6%")}
+                    color="gray"
+                  />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={forward}>
                   <AntDesign name="forward" size={hp("3.5%")} color="black" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={seekToEnd}>
+                <TouchableOpacity onPress={() => seekTo(duration)}>
                   <AntDesign name="stepforward" size={hp("3.5%")} color="black" />
                 </TouchableOpacity>
               </View>
@@ -274,12 +203,12 @@ const styles = StyleSheet.create({
     fontSize: wp("6%"),
     textAlign: "left",
   },
-description: {
-  marginHorizontal: wp("8%"),
-  fontSize: wp("4%"),
-  textAlign: "left", // Ortalamak yerine sola yaslanır
-  bottom: hp("2%"),
-},
+  description: {
+    marginHorizontal: wp("8%"),
+    fontSize: wp("4%"),
+    textAlign: "left",
+    bottom: hp("2%"),
+  },
   button: {
     marginTop: hp("1%"),
     padding: hp("1.5%"),
